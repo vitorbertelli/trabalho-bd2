@@ -1,5 +1,5 @@
 DELIMITER $$
-CREATE TRIGGER avaliar_curso BEFORE INSERT
+CREATE TRIGGER avaliar_curso_insert BEFORE INSERT
 ON funcionario_curso
 FOR EACH ROW
 BEGIN
