@@ -102,6 +102,58 @@ HAVING COUNT(fc.curso_id) = (
 
 ## Otimizar
 
+Em busca de otimizar as consultas no banco de daddos, criamos um index na tebelas Fucionario, que foi populada com 2.000.000 de registros.
+
+```
+mysql> SELECT * FROM funcionario WHERE nome = 'Davi' AND celular LIKE '%8071';
++---------+------+-----------+----------------------+---------+
+| func_id | nome | sobrenome | celular              | dept_id |
++---------+------+-----------+----------------------+---------+
+| 1071426 | Davi | Azevedo   | +55 (081) 95977 8071 |      16 |
+| 1995818 | Davi | Novaes    | +55 31 9 7459 8071   |       5 |
++---------+------+-----------+----------------------+---------+
+2 rows in set (0.68 sec)
+```
+
+No primeiro exemplo, além da consulta ter uma duração de aproximadamente 680 milissegundos, foi necessário ler 1.995.422 linhas, o que pode ser verificado através do comando EXPLAIN SELECT.
+
+```
+mysql> EXPLAIN SELECT * FROM funcionario WHERE nome = 'Davi' AND celular LIKE '%8071';
++----+-------------+-------------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+| id | select_type | table       | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
++----+-------------+-------------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+|  1 | SIMPLE      | funcionario | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1995422 |     1.11 | Using where |
++----+-------------+-------------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)
+```
+
+Então, para otimizar essa consulta, criamos o seguinte index:
+
+``` sql
+ALTER TABLE funcionario ADD INDEX idx_funcionario(nome, celular);
+```
+
+Com a criação desse index, a consulta passou a ter uma resposta quase instantânea e a leitura foi reduzida para 18.740 linhas.
+
+```
+mysql> SELECT * FROM funcionario WHERE nome = 'Davi' AND celular LIKE '%8071';
++---------+------+-----------+----------------------+---------+
+| func_id | nome | sobrenome | celular              | dept_id |
++---------+------+-----------+----------------------+---------+
+| 1071426 | Davi | Azevedo   | +55 (081) 95977 8071 |      16 |
+| 1995818 | Davi | Novaes    | +55 31 9 7459 8071   |       5 |
++---------+------+-----------+----------------------+---------+
+2 rows in set (0.00 sec)
+
+mysql> EXPLAIN SELECT * FROM funcionario WHERE nome = 'Davi' AND celular LIKE '%8071';
++----+-------------+-------------+------------+------+-----------------+-----------------+---------+-------+-------+----------+-----------------------+
+| id | select_type | table       | partitions | type | possible_keys   | key             | key_len | ref   | rows  | filtered | Extra                 |
++----+-------------+-------------+------------+------+-----------------+-----------------+---------+-------+-------+----------+-----------------------+
+|  1 | SIMPLE      | funcionario | NULL       | ref  | idx_funcionario | idx_funcionario | 122     | const | 18740 |    11.11 | Using index condition |
++----+-------------+-------------+------------+------+-----------------+-----------------+---------+-------+-------+----------+-----------------------+
+1 row in set, 1 warning (0.00 sec)
+```
+
 ## Estruturas avançadas
 
 Foi implementado um trigger que garante que as avaliações dos cursos fiquem sempre entre 0 e 5. 
