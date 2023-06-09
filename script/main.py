@@ -27,7 +27,7 @@ def povoar_funcionario(num_func):
     nome = fake.first_name()
     sobrenome = fake.last_name()
     celular = fake.cellphone_number()
-    dept_id = randint(1, 8)
+    dept_id = randint(1, num_dept)
 
     query = "INSERT INTO funcionario (func_id, nome, sobrenome, celular, dept_id) VALUES (%s, %s, %s, %s, %s)"
     values = (func_id, nome, sobrenome, celular, dept_id)
