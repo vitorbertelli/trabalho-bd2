@@ -2,7 +2,7 @@
 
 ## Introdução
 
-Trabalho desenvolvido por Heberth Santos e Vitor Bertelli referente a disciplina de Banco de Dados II. É importante dizer que neste documento estão somente as partes consideradas mais importante dos códigos. Porém, todos os códigos usados para a contrução do projeto estão separados em scripts e disponíveis no [GitHub](https://github.com/vitorbertelli/trabalho_bd2).
+Trabalho desenvolvido por Heberth Santos e Vitor Bertelli referente a disciplina de Banco de Dados II. É importante dizer que neste documento estão somente as partes consideradas mais importantes dos códigos. Porém, todos os códigos usados para a construção do projeto estão separados em scripts e disponíveis no [GitHub](https://github.com/vitorbertelli/trabalho_bd2).
 
 ## Arquitetura do Banco de Dados
 
@@ -14,7 +14,7 @@ A partir do modelo criado usando o MySQL Workbench foi gerado o [script](https:/
   
 ## Popular o Banco de Dados
 
-Para popular as tebelas foram usadas stored procedures.
+Para popular as tabelas foram usadas stored procedures.
 
 ``` sql
 DELIMITER $$
@@ -30,7 +30,7 @@ END $$
 DELIMITER ;
 ```
 
-Para deixar o projeto mais 'humanizados', utilizamos bibliotecas do Python para popular as tabelas Funcionario e Funcionario_Curso com dados falsos.
+Para deixar o projeto mais 'humanizado', utilizamos bibliotecas do Python para popular as tabelas Funcionario e Funcionario_Curso com dados falsos.
 
 ``` python
 def povoar_funcionario(num_func):
@@ -102,7 +102,7 @@ HAVING COUNT(fc.curso_id) = (
 
 ## Otimizar
 
-Em busca de otimizar as consultas no banco de daddos, criamos um index na tebelas Fucionario, que foi populada com 2.000.000 de registros.
+Em busca de otimizar as consultas no banco de dados, criamos um index na tabelas Funcionario, que foi populada com 2.000.000 de registros.
 
 ```
 mysql> SELECT * FROM funcionario WHERE nome = 'Davi' AND celular LIKE '%8071';
